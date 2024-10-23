@@ -1,0 +1,57 @@
+<view class="view_0">
+  <view>
+    <text class="text_0">设备状态：</text>
+    <text class="text_1" wx:if="{{isBleConnect}}">已连接</text>
+    <text class="text_1" wx:if="{{!isBleConnect}}">未连接</text>
+  </view>
+  <view>
+    <text class="text_0"> {{connectedDevice.formatName}}</text>
+  </view>
+</view>
+
+
+<view class="gray-838383" id="scan-status">
+  <view class="listBox">
+    <view>设备列表</view>
+    <image wx:if="{{isScaning}}" id="icon-loading" style="margin-left: 24rpx;" src="../../images/loading.png"></image>
+  </view>
+  <view class="reScanBtn" bindtap="onRefresh">重新扫描</view>
+</view>
+<!-- bindrefresherrefresh="onRefresh" -->
+<scroll-view class="scan-contain" scroll-y refresher-enabled="{{true}}" refresher-threshold="{{80}}" refresher-default-style="none" refresher-background="#F4F7FB" bindrefresherpulling="onPulling" refresher-triggered="{{triggered}}" bindrefresherrestore="onRestore" bindrefresherabort="onAbort">
+  <block wx:for="{{scanDevices}}">
+    <view class="item-scandev-contain layout-row" catchtap="onSelectedDevice" data-item="{{item}}">
+      <view class="item-scandev-left">
+        <view>{{item.formatName}}</view>
+        <view class="layout-row gray-B0B0B0" style="font-size: 24rpx;">
+          <view class="rssi">rssi:{{(item.deviceId===connectedDevice.deviceId)? 0 : item.RSSI}},</view>
+          <view>deviceId : {{item.deviceId}}</view>
+        </view>
+      </view>
+      <view class="item-scandev-right">
+        <image wx:if="{{item.deviceId===connectedDevice.deviceId}}" style="height: 48rpx;width: 48rpx;" src="../../images/icon_choose.png"></image>
+      </view>
+    </view>
+    <view class="space-line"></view>
+  </block>
+</scroll-view>
+
+<view class="view_4" bindtap="onUpdate">
+  升 级
+</view>
+
+<!-- 
+    pShowOTA:Boolean,     //展示OTA升级界面
+    pValue:Number,        //进度
+    pNumber:Number,       //完成次数
+    pTimes:Number,        //测试总次数
+    pOtaFile:String,      //OTA文件名
+    pFailReason:String,   //失败原因 
+    pOtaResult:Number,    //0:成功 1:失败
+    pStatus:Number        //0:检验中 1:升级中 2:回连设备 3:升级成功 4:升级失败
+ -->
+<OTA-View pShow="{{isShowProgress}}" pStatus="{{mStatus}}" pOtaFile="{{mOtaFile}}" pValue="{{mValue}}" pNumber="{{mNumber}}" pTimes="{{mTimes}}" pOtaResult="{{mOtaResult}}" pFailReason="{{mFailReason}}" bind:OnConfirm="onOtaProgressViewConfirm">
+</OTA-View>
+
+<WAIT-View pShow="{{isShowLoading}}" pText="{{mLoadingText}}">
+</WAIT-View>
